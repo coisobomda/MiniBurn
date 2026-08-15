@@ -2,7 +2,7 @@
 #define MESH_H
 
 #include <glad/glad.h>
-#include "vector.h"
+#include "math/vector.h"
 
 typedef struct {
     vec3 position;
@@ -14,14 +14,18 @@ typedef struct {
     GLuint VAO;
     GLuint VBO;
     GLuint EBO;
+
+    unsigned int indexCount;
+    unsigned int vertexSize;
 } Mesh;
 
 typedef struct {
     Mesh mesh;
     Transform transform;
+    GLuint texture;
 } Object;
 
-Object createObject(Mesh mesh, Transform transform);
+Object createObject(Mesh mesh, Transform transform, GLuint texture);
 Mesh createMesh(float* vertices, unsigned int vertexSize, unsigned int* indices, unsigned int indexSize);
 Transform createTransform();
 

@@ -1,12 +1,13 @@
 #include "mesh.h"
-#include "vector.h"
+#include "math/vector.h"
 #include <glad/glad.h>
 #include <stdio.h>
 
-Object createObject(Mesh mesh, Transform transform) {
+Object createObject(Mesh mesh, Transform transform, GLuint texture) {
     Object object;
     object.mesh = mesh;
     object.transform = transform;
+    object.texture = texture;
 
     return object;
 }
@@ -16,7 +17,7 @@ Mesh createMesh(float* vertices, unsigned int vertexSize, unsigned int* indices,
     Mesh mesh;
     GLuint VAO, VBO, EBO;
     
-    glGenVertexArrays(1, &VAO);
+    glGenVertexArrays(1, &VAO); 
 
     glGenBuffers(1, &VBO);
 
@@ -31,8 +32,10 @@ Mesh createMesh(float* vertices, unsigned int vertexSize, unsigned int* indices,
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexSize, indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
@@ -41,6 +44,9 @@ Mesh createMesh(float* vertices, unsigned int vertexSize, unsigned int* indices,
     mesh.VAO = VAO;
     mesh.VBO = VBO;
     mesh.EBO = EBO;
+
+    mesh.indexCount = indexSize / sizeof(unsigned int);
+    mesh.vertexSize = vertexSize;
 
     return mesh;
 }

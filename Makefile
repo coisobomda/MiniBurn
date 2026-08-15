@@ -1,10 +1,10 @@
 CC = clang
-LDFLAGS = -Iinclude -lSDL2 -lGL
+LDFLAGS = -Iinclude -lSDL2 -lGL -lm
 
 all: main
 
-main: src/glad.c src/main.c src/render.c src/mesh.c src/mat4.c
-	$(CC) src/main.c src/glad.c src/render.c src/mesh.c src/mat4.c -o program $(LDFLAGS)
+main: src/glad.c src/main.c src/render.c src/mesh.c src/math/mat4.c src/math/radians.c src/texture.c src/stb_image.c
+	$(CC) -g src/main.c src/glad.c src/render.c src/mesh.c src/math/mat4.c src/math/radians.c src/texture.c src/stb_image.c -o program $(LDFLAGS)
 
 .PHONY: all clean
 

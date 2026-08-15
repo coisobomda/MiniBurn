@@ -2,6 +2,7 @@
 #define RENDER_H
 
 #include <glad/glad.h>
+#include <SDL2/SDL.h>
 #include "mesh.h"
 
 void windowInit(void);
