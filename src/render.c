@@ -6,14 +6,16 @@
 #include "mesh.h"
 #include <math.h>
 #include "texture.h"
+#include "camera.h"
 
 SDL_Window *window;
 SDL_GLContext context;
 
 GLuint shaderProgram, vertexShader, fragmentShader;
 
-int WIDTH = 720;
+int WIDTH = 1280;
 int HEIGHT = 720;
+mat4 projection;
 
 void windowInit(void) {
     SDL_Init(SDL_INIT_VIDEO);
@@ -70,12 +72,15 @@ void compileShaders() {
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
     glEnable(GL_DEPTH_TEST);
+
+    projection = perspective(toRadians(90.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
+    printMat4(projection);
     
 }
 
 
 
-void render(Object object) {
+void render(Object object, Camera camera) {
     mat4 matrixScale = {0};
     mat4 matrixTranslation = {0};
 
@@ -148,8 +153,6 @@ void render(Object object) {
     matrix = multiplyMat4(matrix, matrixRotation);
 
     // main rendering
-    glClearColor(0.11f, 0.14f, 0.18f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glUseProgram(shaderProgram);
 
     GLint transformLocation = glGetUniformLocation(shaderProgram, "transform");
@@ -161,12 +164,16 @@ void render(Object object) {
     GLint textureLocation = glGetUniformLocation(shaderProgram, "ourTexture");
     glUniform1i(textureLocation, 0);
 
+    GLint viewLocation = glGetUniformLocation(shaderProgram, "view");
+    mat4 viewMatrix = generateViewMatrix(camera);
+
+    glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &viewMatrix.m[0][0]);
+
+    GLint perspectiveLocation = glGetUniformLocation(shaderProgram, "perspective");
+    glUniformMatrix4fv(perspectiveLocation, 1, GL_FALSE, &projection.m[0][0]);
 
     glBindVertexArray(object.mesh.VAO);
     glDrawElements(GL_TRIANGLES, object.mesh.indexCount, GL_UNSIGNED_INT, 0);
-
-    SDL_GL_SwapWindow(window);
-    glBindVertexArray(0);
 
 }
 
@@ -175,5 +182,15 @@ void endProgram() {
     SDL_GL_DeleteContext(context);
     SDL_DestroyWindow(window);
     SDL_Quit();
+}
+
+void clear() {
+    glClearColor(0.11f, 0.14f, 0.18f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void swap() {
+    SDL_GL_SwapWindow(window);
+    glBindVertexArray(0);
 }
 

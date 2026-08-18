@@ -5,8 +5,11 @@
 #include "mesh.h"
 #include "math/vector.h"
 #include "texture.h"
+#include "camera.h"
+#include <math.h>
 
 int running = 1;
+float deltaTime;
 
 
 float vertices[] = {
@@ -73,23 +76,72 @@ int main(void) {
 
 
     GLuint texture = loadTexture("src/missing.png");
+    GLuint texture2 = loadTexture("src/tung.jpg");
+    Camera camera = {};
+    camera.position = (vec3){0.0f, 0.0f, -5.0f};
 
-    cube = createObject(cubemesh, transform, texture);
+    cube = createObject(cubemesh, transform, texture2);
+    cube2 = createObject(cubemesh, transform, texture);
 
 
 
 
     SDL_Event event;
+    cube.transform.position.z = 0.0f;
+    cube2.transform.position.x = 2.0f;
 
     while (running) {
+        clear();
+        deltaTime = SDL_GetTicks64() / 1000.0f;
 
-        render(cube);
-        cube.transform.position.z += -0.01;
-        printf("%f\n", cube.transform.position.z);
+        // float camX = sin(1 * deltaTime) * 5;
+        // float camZ = cos(1 * deltaTime) * 5;
+
+        // camera.position = (vec3){camX, 0, camZ};
+
+        render(cube, camera);
+        render(cube2, camera);
+        cube.transform.rotation.z += -1.0f;
+        swap();
+
+        const Uint8* keyboard = SDL_GetKeyboardState(NULL);
 
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 running = 0;
+            }
+
+            if (event.type == SDL_KEYDOWN) {
+                switch (event.key.keysym.sym) {
+                case SDLK_ESCAPE:
+                // Exit or close menu
+                    break;
+                case SDLK_w:
+                    camera.position.z += 0.1f;
+                    break;
+                case SDLK_s:
+                    camera.position.z -= 0.1f;
+                    break;
+                case SDLK_a:
+                    camera.position.x += 0.1f;
+                    break;
+                case SDLK_d:
+                    camera.position.x -= 0.1f;
+                    break;
+                case SDLK_e:
+                    camera.yaw += 5;
+                    break;
+                case SDLK_q:
+                    camera.yaw -= 5;
+                    break;
+                case SDLK_i:
+                    camera.pitch += 5;
+                    break;
+                case SDLK_j:
+                    camera.pitch -= 5;
+                    break;
+
+                }
             }
 
         }

@@ -22,8 +22,7 @@ mat4 multiplyMat4(mat4 matrixA, mat4 matrixB) {
     return result;
 }
 
-void printMat4(mat4 matrix)
-{
+void printMat4(mat4 matrix) {
     for (int row = 0; row < 4; row++)
     {
         printf("| ");
@@ -36,3 +35,15 @@ void printMat4(mat4 matrix)
         printf("|\n");
     }
 }
+
+mat4 identity(mat4 matrix) {
+    mat4 matrixResult = matrix;
+    matrixResult.m[0][0] = 1.0f;
+    matrixResult.m[1][1] = 1.0f;
+    matrixResult.m[2][2] = 1.0f;
+    matrixResult.m[3][3] = 1.0f;
+
+    return matrixResult;
+}
+
+

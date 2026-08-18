@@ -7,5 +7,6 @@ typedef struct{
 
 mat4 multiplyMat4(mat4 matrixA, mat4 matrixB);
 void printMat4(mat4 matrix);
+mat4 identity(mat4 matrix);
 
 #endif
